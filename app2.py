@@ -8,6 +8,18 @@ if "current_page" not in st.session_state:
 
 
 st.set_page_config(page_title="Store Sales Dashboard", layout="wide")
+# Define caching for data loading
+@st.cache_data
+def load_data(filepath):
+    return pd.read_excel(filepath)
+
+@st.cache_data
+def preprocess_data(df):
+    # Ensure datetime format
+    df['Sold Date'] = pd.to_datetime(df['Sold Date'])  
+    df['profit'] = df['Sold Price Total'] - df['Sold Cost Total']
+    df['Employee_First'] = df['Employee'].apply(lambda x: x.split()[0].capitalize())
+    return df
 
 # File uploader
 st.sidebar.title("Upload Sales Data")
@@ -15,15 +27,16 @@ uploaded_file = st.sidebar.file_uploader(
     "Upload an Excel file (with required columns)", 
     type=["xlsx", "xls"]
 )
-sample_filepath_pc = '/Users/dezmon/Library/Mobile Documents/com~apple~CloudDocs/Visual Analytics/Final Project (Streamlit)/Items_Sold_Export_CLT.xlsx'
+#sample_filepath_pc = '/Users/dezmon/Library/Mobile Documents/com~apple~CloudDocs/Visual Analytics/Final Project (Streamlit)/Items_Sold_Export_CLT.xlsx'
+sample_filepath_laptop = '/Users/dmoney/Library/Mobile Documents/com~apple~CloudDocs/Visual Analytics/Final Project (Streamlit)/Items_Sold_Export_CLT.xlsx'
 
 # Default dataset
 if uploaded_file:
-    df = pd.read_excel(uploaded_file)
+    df = load_data(uploaded_file)
     st.sidebar.success("File uploaded successfully!")
 else:
     st.sidebar.info("Using sample dataset. Upload a file to analyze your own data.")
-    df = pd.read_excel(sample_filepath_pc)  # Replace with a local file path
+    df = load_data(sample_filepath_laptop)
 
 # Ensure required columns exist
 required_columns = ['Sold Date', 'Invoice No', 'Sold Cost Total', 
@@ -55,6 +68,13 @@ def home():
     Explore detailed insights about the store's performance, employee contributions, and category analysis.
     Use the sidebar to navigate through the pages.
     """)
+    st.markdown("""
+    ---
+    **💡 Pro Tip:** A sample dataset from **September 2024** has been preloaded for your convenience.  
+    Want to analyze data for a different time frame? Simply upload a new sales export file to explore fresh insights.  
+
+    **🔍 Ready to get started?**  Use the **sidebar** to select a page and dive into the data!
+    """)
     # Company Logo
     st.image("UC_Logo.png", 
             caption="Monthly performance insights at your fingertips",
@@ -68,14 +88,7 @@ def home():
     - 📈 **Category Insights**: Dive into the top-performing and least-performing product categories.
     """)
 
-    st.markdown("""
-    ---
-    **💡 Pro Tip:** A sample dataset from **September 2024** has been preloaded for your convenience.  
-    Want to analyze data for a different time frame? Simply upload a new sales export file to explore fresh insights.  
 
-    **🔍 Ready to get started?**  
-    Use the **sidebar** to select a page and dive into the data!
-    """)
 
 def overview(df): 
     total_profit = df['profit'].sum()
@@ -114,7 +127,7 @@ def performance(df):
     # Pivot table for heatmap data
     heatmap_data = df.groupby(['Weekday', 'Formatted Hour']).size().reset_index(name='Count')
     # Matrix format for heatmap
-    heatmap_pivot = heatmap_data.pivot(index='Weekday', columns='Hour', values='Count').fillna(0)
+    heatmap_pivot = heatmap_data.pivot(index='Weekday', columns='Formatted Hour', values='Count').fillna(0)
 
     ordered_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     heatmap_pivot = heatmap_pivot.reindex(ordered_days).fillna(0)
