@@ -61,10 +61,48 @@ def overview():
 
 def performance(): 
     # Add content for performance page
-    st.title("Performance")
-    st.write("Performance content goes here.")   
+    st.title("Store Performance")
+    st.write("This heatmap displays the store's high traffic times, helping you identify the busiest periods throughout the week.  Use this to optimize staffing and manage inventory effectively.")   
+    # Extract hour and weekday for heatmap
+    df['Hour'] = df['Sold Date'].dt.hour
+    df['Weekday'] = df['Sold Date'].dt.day_name()  # e.g., "Monday", "Tuesday"
+    # Format hour to show 12-hour format with am/pm
+    def format_hour(hour):
+        if hour == 0:
+            return "12am"
+        elif hour == 12:
+            return "12pm"
+        elif hour > 12:
+            return f"{hour - 12}pm"
+        else:
+            return f"{hour}am"
+        
+    df['Formatted Hour'] = df['Hour'].apply(format_hour)
+    # Create a pivot table for heatmap data
+    heatmap_data = df.groupby(['Weekday', 'Formatted Hour']).size().reset_index(name='Count')
 
+    # Pivot to create matrix-like format for heatmap
+    heatmap_pivot = heatmap_data.pivot(index='Weekday', columns='Formatted Hour', values='Count').fillna(0)
 
+    # Reorder days of the week
+    ordered_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    heatmap_pivot = heatmap_pivot.reindex(ordered_days)
+
+    # Line plot for sales over time
+    line_fig = px.line(df, x='Date', y='profit', title="Daily Sales Over Time")
+
+    # Heatmap for sales by hour and weekday
+    heatmap_fig = px.imshow(
+        heatmap_pivot,
+        labels={'x': 'Hour of Day', 'y': 'Weekday', 'color': 'Count'},
+        x=heatmap_pivot.columns,
+        y=heatmap_pivot.index,
+        title="Sales Count by Hour and Weekday",
+        color_continuous_scale='Greens'
+    )
+    st.plotly_chart(heatmap_fig)
+    st.write("Below, the employee performance chart highlights top preformers based on the number of transactions processed.")
+    st.write("You can also view the average inovice value, providing further insight into their preformance.")
 # Main window
 fn_map = {
     'home': home,
