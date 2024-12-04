@@ -4,3 +4,4 @@ numpy==1.23.5
 matplotlib==3.6.2
 openpyxl
 altair==5.0.1
+plotly
