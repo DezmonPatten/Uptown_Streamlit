@@ -120,10 +120,10 @@ def performance():
             return f"{hour}am"
         
     df2['Formatted Hour'] = df2['Hour'].apply(format_hour)
-    # Create a pivot table for heatmap data
+    # Pivot table for heatmap data
     heatmap_data = df2.groupby(['Weekday', 'Formatted Hour']).size().reset_index(name='Count')
 
-    # Pivot to create matrix-like format for heatmap
+    # Matrix format for heatmap
     heatmap_pivot = heatmap_data.pivot(index='Weekday', columns='Formatted Hour', values='Count').fillna(0)
 
     # Reorder days of the week

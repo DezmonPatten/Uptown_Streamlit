@@ -100,13 +100,25 @@ def performance(df):
     # Heatmap: Sales by Hour and Weekday
     df['Hour'] = df['Sold Date'].dt.hour
     df['Weekday'] = df['Sold Date'].dt.day_name()
-
-    heatmap_data = df.groupby(['Weekday', 'Hour']).size().reset_index(name='Count')
+    def format_hour(hour):
+        if hour == 0:
+            return "12am"
+        elif hour == 12:
+            return "12pm"
+        elif hour > 12:
+            return f"{hour - 12}pm"
+        else:
+            return f"{hour}am"
+        
+    df['Formatted Hour'] = df['Hour'].apply(format_hour)
+    # Pivot table for heatmap data
+    heatmap_data = df.groupby(['Weekday', 'Formatted Hour']).size().reset_index(name='Count')
+    # Matrix format for heatmap
     heatmap_pivot = heatmap_data.pivot(index='Weekday', columns='Hour', values='Count').fillna(0)
 
     ordered_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     heatmap_pivot = heatmap_pivot.reindex(ordered_days).fillna(0)
-
+   
     heatmap_fig = px.imshow(
         heatmap_pivot,
         labels={'x': 'Hour of Day', 'y': 'Weekday', 'color': 'Count'},
