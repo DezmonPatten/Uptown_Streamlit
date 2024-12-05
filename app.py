@@ -11,8 +11,7 @@ if "current_page" not in st.session_state:
 st.set_page_config(page_title="Monthly Performance Tracker", layout="wide")
 #st.title("Uptown Cheapskates Monthly Performance")
 
-filepath_pc = '/Users/dezmon/Library/Mobile Documents/com~apple~CloudDocs/Visual Analytics/Final Project (Streamlit)/Items_Sold_Export_CLT.xlsx'
-#filepath_laptop = '/Users/dmoney/Library/Mobile Documents/com~apple~CloudDocs/Visual Analytics/Final Project (Streamlit)/Items_Sold_Export_CLT.xlsx'
+filepath_pc = 'Items_Sold_Export_Uptown_Cheapskate_Charlotte_20241007.xlsx'
 df = pd.read_excel(filepath_pc, 
                    usecols=['Sold Date','Invoice No', 'Sold Cost Total','Sold Price Total','Sub Category','Days on Hand',
                             'Transaction Type','Employee Role','Employee_First', 'Sold Quantity'])
