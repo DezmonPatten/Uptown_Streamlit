@@ -28,7 +28,7 @@ uploaded_file = st.sidebar.file_uploader(
     type=["xlsx", "xls"]
 )
 #sample_filepath_pc = '/Users/dezmon/Library/Mobile Documents/com~apple~CloudDocs/Visual Analytics/Final Project (Streamlit)/Items_Sold_Export_CLT.xlsx'
-sample_filepath_laptop = '/Users/dmoney/Library/Mobile Documents/com~apple~CloudDocs/Visual Analytics/Final Project (Streamlit)/Items_Sold_Export_CLT.xlsx'
+sample_filepath_laptop = 'Items_Sold_Export_Uptown_Cheapskate_Charlotte_20241007.xlsx'
 
 # Default dataset
 if uploaded_file:
