@@ -62,7 +62,7 @@ def switch_page(page: str):
     st.session_state.current_page = page
 
 def home(): 
-    st.title("Uptown Cheapskates Monthly Performance")
+    st.title("Uptown Cheapskates Sales Performance Dashboard")
     st.markdown("""
     Welcome to **Uptown Cheapskate's Performance Dashboard**! 
     Explore detailed insights about the store's performance, employee contributions, and category analysis.
@@ -160,7 +160,7 @@ def performance(df):
 
 
 def items(df):
-    st.title("Category Analysis")
+    st.title("Item Category Analysis")
     st.write("Insights into the top and lowest-performing categories:")
 
     # Top 10 Selling Categories by Profit
